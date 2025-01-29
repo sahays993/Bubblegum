@@ -1,0 +1,151 @@
+[gd_scene load_steps=16 format=3 uid="uid://dkp8ruih5klm8"]
+
+[ext_resource type="Texture2D" uid="uid://dqsmfn6344f8q" path="res://assets/bubblegum_float.png" id="2_e0f8l"]
+
+[sub_resource type="GDScript" id="GDScript_6tch5"]
+script/source = "extends CharacterBody2D
+
+
+var speed = 200  # Movement speed
+var float_speed = -150  # Speed for floating upward
+var gravity = 500  # Gravity applied when not floating
+var is_floating = false  # Track if the player is floating
+var float_duration = 2.0  # Maximum duration of floating in seconds
+var float_timer = 0.0  # Timer to track float duration
+func _ready():
+	# Ensure the float timer starts at 0
+	float_timer = 0.0
+
+func _process(delta):
+	var velocity = Vector2.ZERO
+
+	# Horizontal movement input
+	if Input.is_action_pressed(\"ui_right\"):
+		velocity.x += 1
+	if Input.is_action_pressed(\"ui_left\"):
+		velocity.x -= 1
+
+	# Normalize the direction to prevent diagonal speed boost
+	if velocity != Vector2.ZERO:
+		velocity = velocity.normalized()
+
+	# Vertical movement (Floating Power-Up)
+	if is_floating:
+		velocity.y = float_speed  # Move upward during floating
+		float_timer += delta  # Increase float timer
+		if float_timer >= float_duration:
+			is_floating = false  # Stop floating when time runs out
+	else:
+		velocity.y += gravity * delta  # Apply gravity when not floating
+
+	# Enable floating with the 'Q' key (if not already floating)
+	if Input.is_action_just_pressed(\"float_power\") and not is_floating:
+		is_floating = true
+		float_timer = 0.0  # Reset the float timer
+
+	# Move the character
+	velocity = velocity * speed
+	move_and_slide(velocity)
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4i5es"]
+radius = 20.0
+height = 40.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b07fn"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(2, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ae2po"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(50, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5v40i"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(98, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y3be8"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(146, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kspdq"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(194, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mektv"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(242, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w2wvw"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(290, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oypx0"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(338, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2per4"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(386, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yg57x"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(434, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ke8e6"]
+atlas = ExtResource("2_e0f8l")
+region = Rect2(482, 0, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8u0ft"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b07fn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ae2po")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5v40i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y3be8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kspdq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mektv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w2wvw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oypx0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2per4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yg57x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ke8e6")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="float_power" type="CharacterBody2D"]
+script = SubResource("GDScript_6tch5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2, -5)
+shape = SubResource("CapsuleShape2D_4i5es")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1, 7)
+sprite_frames = SubResource("SpriteFrames_8u0ft")
+frame = 8
+frame_progress = 0.565081
